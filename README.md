@@ -7,8 +7,8 @@ Royal Bets is a football tips storefront with a Node.js server for publishing ma
 Requirements: Node.js 20.6 or newer.
 
 1. Copy `.env.example` to `.env` (`Copy-Item .env.example .env` in PowerShell).
-2. Set `ADMIN_USERNAME`=BOIT and a unique `ADMIN_PASSWORD`=@Nakuru2023 of at least 14 characters.
-3. Generate a session secret with `node -e "process.stdout.write(require('node:crypto').randomBytes(48).toString('base64url'))"` and place the output in `SESSION_SECRET`.
+2. Set `ADMIN_USERNAME`=BOIT and a unique `ADMIN_PASSWORD`=@Nakuru2026 of at least 14 characters.
+3. Generate a session secret with `node -e "process.stdout.write(require('node:crypto').randomBytes(48).toString('base64url'))"` and place the output in `SESSION_SECRET`=CHEPKUNYUK.
 4. Keep `.env` private and never commit or share it.
 5. Run `npm start`.
 6. Open `http://127.0.0.1:3000`. To post matches, open `http://127.0.0.1:3000/admin`.
