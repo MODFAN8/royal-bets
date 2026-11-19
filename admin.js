@@ -153,6 +153,11 @@ async function deleteFixture(fixture) {
 async function checkSession() {
   try {
     const session = await request("/api/admin/session");
+    if (!session.configured) {
+      showLogin();
+      setStatus(loginStatus, "Admin access is not configured on this server yet. Ask the site owner to set its private environment variables.", true);
+      return;
+    }
     if (!session.authenticated) {
       showLogin();
       return;

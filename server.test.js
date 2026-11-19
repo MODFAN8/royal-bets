@@ -278,3 +278,24 @@ test("M-Pesa checkout stays disabled until Daraja credentials and HTTPS callback
   });
   assert.equal(checkout.status, 503);
 });
+
+test("public site starts while admin access remains disabled until its secrets are set", async (t) => {
+  const { baseUrl } = await startServer(t, {
+    ADMIN_USERNAME: "",
+    ADMIN_PASSWORD: "",
+    SESSION_SECRET: ""
+  });
+  const session = await (await fetch(`${baseUrl}/api/admin/session`)).json();
+  assert.deepEqual(session, { authenticated: false, configured: false });
+
+  const login = await fetch(`${baseUrl}/api/admin/login`, {
+    method: "POST",
+    headers: { Origin: baseUrl, "Content-Type": "application/json" },
+    body: JSON.stringify({ username: "admin", password: "anything" })
+  });
+  assert.equal(login.status, 503);
+  assert.match((await login.json()).error, /Admin sign-in is disabled/);
+
+  const paymentConfiguration = await (await fetch(`${baseUrl}/api/payments/config`)).json();
+  assert.equal(paymentConfiguration.enabled, false);
+});

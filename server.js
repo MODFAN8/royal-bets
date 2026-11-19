@@ -32,7 +32,12 @@ const STATIC_FILES = new Map([
 
 const ADMIN_USERNAME = process.env.ADMIN_USERNAME;
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD;
-const SESSION_SECRET = process.env.SESSION_SECRET;
+const SESSION_SECRET = process.env.SESSION_SECRET || crypto.randomBytes(32).toString("base64url");
+const ADMIN_CONFIGURED = Boolean(
+  ADMIN_USERNAME && ADMIN_USERNAME.length <= 100 &&
+  ADMIN_PASSWORD && ADMIN_PASSWORD.length >= 14 &&
+  process.env.SESSION_SECRET && process.env.SESSION_SECRET.length >= 32
+);
 const DARAJA_ENV = process.env.DARAJA_ENV;
 const DARAJA_CONSUMER_KEY = process.env.DARAJA_CONSUMER_KEY;
 const DARAJA_CONSUMER_SECRET = process.env.DARAJA_CONSUMER_SECRET;
@@ -55,15 +60,6 @@ const CALLBACK_ROUTE = DARAJA_CALLBACK_TOKEN
 if (!Number.isInteger(PORT) || PORT < 1 || PORT > 65535) {
   throw new Error("PORT must be a valid TCP port.");
 }
-if (!ADMIN_USERNAME || ADMIN_USERNAME.length > 100) {
-  throw new Error("Set ADMIN_USERNAME in the environment before starting the server.");
-}
-if (!ADMIN_PASSWORD || ADMIN_PASSWORD.length < 14) {
-  throw new Error("Set ADMIN_PASSWORD to a password of at least 14 characters.");
-}
-if (!SESSION_SECRET || SESSION_SECRET.length < 32) {
-  throw new Error("Set SESSION_SECRET to a random value of at least 32 characters.");
-}
 if (IS_PRODUCTION && process.env.SESSION_COOKIE_SECURE === "false") {
   throw new Error("Secure session cookies cannot be disabled in production.");
 }
@@ -74,8 +70,8 @@ if (DARAJA_BUSINESS_TYPE && !["paybill", "till"].includes(DARAJA_BUSINESS_TYPE))
   throw new Error("DARAJA_BUSINESS_TYPE must be paybill or till.");
 }
 
-const passwordSalt = `royal-bets-admin:${ADMIN_USERNAME}`;
-const passwordHash = crypto.scryptSync(ADMIN_PASSWORD, passwordSalt, 64);
+const passwordSalt = `royal-bets-admin:${ADMIN_USERNAME || ""}`;
+const passwordHash = ADMIN_CONFIGURED ? crypto.scryptSync(ADMIN_PASSWORD, passwordSalt, 64) : null;
 const sessions = new Map();
 const loginAttempts = new Map();
 let fixtures = [];
@@ -639,8 +635,8 @@ async function handleRequest(request, response) {
   if (method === "GET" && pathname === "/api/admin/session") {
     const session = getSession(request);
     sendJson(response, 200, session
-      ? { authenticated: true, csrfToken: session.csrfToken }
-      : { authenticated: false });
+      ? { authenticated: true, configured: ADMIN_CONFIGURED, csrfToken: session.csrfToken }
+      : { authenticated: false, configured: ADMIN_CONFIGURED });
     return;
   }
   if (pathname.startsWith("/api/admin/") && !isSameOrigin(request) && method !== "GET") {
@@ -648,6 +644,10 @@ async function handleRequest(request, response) {
     return;
   }
   if (method === "POST" && pathname === "/api/admin/login") {
+    if (!ADMIN_CONFIGURED) {
+      sendError(response, 503, "Admin sign-in is disabled until ADMIN_USERNAME, ADMIN_PASSWORD, and SESSION_SECRET are configured.");
+      return;
+    }
     const ip = clientIp(request);
     if (loginIsBlocked(ip)) {
       sendError(response, 429, "Too many sign-in attempts. Try again in 15 minutes.");

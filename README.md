@@ -17,7 +17,9 @@ The server stores fixtures in `data/fixtures.json`. The public website uses `GET
 
 ## Production deployment
 
-Deploy the Node.js server over HTTPS. Configure the environment variables in the host's secret settings, set `NODE_ENV=production`, and use a persistent disk for `DATA_FILE`. Run one server instance: fixture data is file-backed and login sessions are held in memory, so a restart signs the admin out. Use a managed database and shared session store before running multiple instances or hosting subscriber-only access.
+Deploy the Node.js server over HTTPS with `node server.js` as the start command; hosting platforms supply `PORT` and environment variables, so do not use the local `.env` start command there. The public storefront can start without admin credentials, but admin sign-in and all admin routes remain unavailable until `ADMIN_USERNAME`, a unique `ADMIN_PASSWORD` of at least 14 characters, and a random `SESSION_SECRET` of at least 32 characters are set in the host's private environment settings. Never commit those values.
+
+Use a persistent disk for `DATA_FILE` and `PAYMENTS_FILE`. Run one server instance: fixture and payment records are file-backed and login sessions are held in memory, so ephemeral storage loses data when the host restarts and a restart signs the admin out. Use a managed database and shared session store before running multiple instances or hosting subscriber-only access.
 
 The admin password and session secret are server environment secrets; they are not entered into or bundled with the website. Do not expose the server on an unsecured public network or deploy without HTTPS.
 
