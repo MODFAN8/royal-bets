@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#090a0d">
+  <title>Royal Bets Admin | Sign in</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --page: #090a0d;
+      --surface: #121419;
+      --border: #2b2e35;
+      --text: #f5f2e9;
+      --muted: #a7a7aa;
+      --gold: #d7b25f;
+      --gold-light: #f0d48e;
+      --green: #9ccea3;
+      --red: #ff9a9a;
+    }
+    * { box-sizing: border-box; }
+    body { min-width: 320px; margin: 0; background: var(--page); color: var(--text); font: 15px/1.55 Arial, Helvetica, sans-serif; }
+    a { color: inherit; text-decoration: none; }
+    button, input, textarea { font: inherit; }
+    button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visible { outline: 2px solid var(--gold-light); outline-offset: 3px; }
+    .wrap { width: min(940px, calc(100% - 32px)); margin: 0 auto; }
+    header { border-bottom: 1px solid rgba(215, 178, 95, .18); }
+    .nav { min-height: 68px; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+    .brand { display: flex; align-items: center; gap: 10px; font-size: 16px; font-weight: 900; letter-spacing: .08em; }
+    .brand-mark { display: grid; width: 38px; height: 38px; place-items: center; border: 1px solid var(--gold); border-radius: 11px; color: var(--gold-light); }
+    .back-link { color: var(--muted); font-size: 13px; }
+    main { padding: 38px 0 60px; }
+    .eyebrow { margin: 0 0 8px; color: var(--gold-light); font-size: 11px; font-weight: 800; letter-spacing: .18em; text-transform: uppercase; }
+    h1 { margin: 0; font-size: clamp(28px, 5vw, 40px); letter-spacing: -.04em; }
+    h2 { margin: 0; font-size: 22px; }
+    .intro { margin: 7px 0 20px; color: var(--muted); }
+    .panel { padding: clamp(17px, 3vw, 24px); border: 1px solid var(--border); border-radius: 12px; background: var(--surface); }
+    .panel[hidden] { display: none; }
+    .stack { display: grid; gap: 14px; }
+    .form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 13px; }
+    .field { display: grid; gap: 6px; }
+    .wide { grid-column: 1 / -1; }
+    label { color: #ded8c9; font-size: 12px; font-weight: 700; }
+    .control { width: 100%; min-height: 42px; padding: 9px 11px; border: 1px solid #383b42; border-radius: 7px; background: #0e1014; color: var(--text); }
+    textarea.control { min-height: 82px; resize: vertical; }
+    .button { display: inline-flex; min-height: 40px; align-items: center; justify-content: center; padding: 8px 14px; border: 1px solid var(--gold); border-radius: 7px; background: var(--gold); color: #16130b; font-weight: 800; cursor: pointer; }
+    .button-outline { background: transparent; color: var(--gold-light); }
+    .button-danger { border-color: #884444; background: transparent; color: #ffaaaa; }
+    .button:disabled { opacity: .6; cursor: wait; }
+    .actions { display: flex; flex-wrap: wrap; align-items: center; gap: 9px; }
+    .status { min-height: 20px; margin: 0; color: var(--green); font-size: 13px; }
+    .status.error { color: var(--red); }
+    .muted { color: var(--muted); font-size: 12px; }
+    .check-row { display: flex; align-items: center; gap: 9px; }
+    .check-row input { width: 18px; height: 18px; accent-color: var(--gold); }
+    .fixture-list { display: grid; gap: 10px; margin-top: 20px; }
+    .fixture-row { display: flex; align-items: center; justify-content: space-between; gap: 14px; padding: 12px; border: 1px solid var(--border); border-radius: 8px; }
+    .fixture-row p { margin: 0; }
+    .fixture-name { font-weight: 700; }
+    .fixture-meta { color: var(--muted); font-size: 11px; }
+    .fixture-actions { display: flex; flex-shrink: 0; gap: 7px; }
+    .security-note { margin: 0 0 16px; color: #d0c198; font-size: 12px; }
+    @media (max-width: 560px) {
+      main { padding-top: 28px; }
+      .form-grid { grid-template-columns: 1fr; }
+      .wide { grid-column: auto; }
+      .fixture-row { align-items: flex-start; flex-direction: column; }
+      .fixture-actions { width: 100%; }
+      .fixture-actions .button { flex: 1; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap nav">
+      <a class="brand" href="/" aria-label="Royal Bets home"><span class="brand-mark">RB</span><span>ROYAL BETS · ADMIN</span></a>
+      <a class="back-link" href="/">View public site</a>
+    </div>
+  </header>
+  <main class="wrap">
+    <p class="eyebrow">Private content management</p>
+    <h1>Admin dashboard</h1>
+    <p class="intro">Sign in to post and manage Royal Bets match previews and members-only tips.</p>
+
+    <section id="loginPanel" class="panel" aria-labelledby="loginTitle">
+      <form id="loginForm" class="stack">
+        <h2 id="loginTitle">Admin sign in</h2>
+        <div class="field"><label for="username">Username</label><input class="control" id="username" name="username" autocomplete="username" required maxlength="100"></div>
+        <div class="field"><label for="password">Password</label><input class="control" id="password" name="password" type="password" autocomplete="current-password" required maxlength="256"></div>
+        <div class="actions"><button id="loginButton" class="button" type="submit">Sign in</button><p id="loginStatus" class="status" role="status" aria-live="polite"></p></div>
+        <p class="muted">Admin credentials are validated by the Node.js server and are never stored in this page.</p>
+      </form>
+    </section>
+
+    <section id="dashboardPanel" class="panel" aria-labelledby="dashboardTitle" hidden>
+      <p class="security-note">Authenticated admin session. Paid tips are returned only to this signed-in dashboard; the public fixture API omits them.</p>
+      <div class="actions" style="justify-content:space-between;margin-bottom:18px">
+        <h2 id="dashboardTitle">Manage fixtures</h2>
+        <button id="logoutButton" class="button button-outline" type="button">Sign out</button>
+      </div>
+      <form id="fixtureForm" class="form-grid">
+        <input id="fixtureId" type="hidden">
+        <div class="field"><label for="league">Competition</label><input class="control" id="league" maxlength="60" required></div>
+        <div class="field"><label for="date">Match date</label><input class="control" id="date" type="date" required></div>
+        <div class="field"><label for="time">Kick-off (EAT)</label><input class="control" id="time" type="time" required></div>
+        <div class="field"><label for="home">Home team</label><input class="control" id="home" maxlength="60" required></div>
+        <div class="field"><label for="away">Away team</label><input class="control" id="away" maxlength="60" required></div>
+        <div class="field wide"><label for="analysis">Public preview / analysis</label><textarea class="control" id="analysis" maxlength="800" required></textarea></div>
+        <div class="field wide"><label for="tipTeaser">Public tip teaser (optional)</label><input class="control" id="tipTeaser" maxlength="160" placeholder="Example: VIP analysis available to members"></div>
+        <div class="field wide"><label for="vipTip">Private VIP tip (admin only)</label><textarea class="control" id="vipTip" maxlength="1000"></textarea></div>
+        <div class="field wide"><label for="vvipTip">Private VVIP tip (admin only)</label><textarea class="control" id="vvipTip" maxlength="1000"></textarea></div>
+        <label class="check-row wide" for="published"><input id="published" type="checkbox" checked><span>Publish fixture and free preview on the public homepage</span></label>
+        <div class="actions wide">
+          <button id="saveFixture" class="button" type="submit">Publish fixture</button>
+          <button id="cancelEdit" class="button button-outline" type="button" hidden>Cancel edit</button>
+          <p id="fixtureStatus" class="status" role="status" aria-live="polite"></p>
+        </div>
+      </form>
+      <div id="fixtureList" class="fixture-list" aria-label="Saved fixtures"></div>
+    </section>
+  </main>
+  <script src="/admin.js" defer></script>
+</body>
+</html>
